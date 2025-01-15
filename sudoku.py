@@ -73,6 +73,8 @@ class Sudoku:
         guesses = self.initial_guesses
         if cell:
             while len(guesses) > 0:
+                if solved:
+                    return True
                 self.set_value(cell, guesses[0])
                 if self.check_valid():
                     solved = self.solve()
