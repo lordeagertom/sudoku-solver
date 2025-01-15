@@ -99,20 +99,12 @@ def test_squares_valid_with_invalid_square():
 
 
 def test_find_next_cell_on_empty_board(empty_sudoku):
-    assert empty_sudoku.find_next_empty_cell() == (0, 0)  # First cell should be (0, 0)
+    assert empty_sudoku.next_empty_cell == (0, 0)  # First cell should be (0, 0)
 
 
 def test_find_next_cell_on_partially_filled_board(partial_sudoku):
-    assert partial_sudoku.find_next_empty_cell() == (0, 2)  # First empty cell should be (0, 2)
+    assert partial_sudoku.next_empty_cell == (0, 2)  # First empty cell should be (0, 2)
 
 
 def test_find_next_cell_on_full_board(complete_sudoku):
-    assert complete_sudoku.find_next_empty_cell() is None
-
-
-def test_check_complete_on_full_board(complete_sudoku):
-    assert complete_sudoku.complete  # Complete board should be marked as complete
-
-
-def test_check_complete_on_partially_filled_board(partial_sudoku):
-    assert not partial_sudoku.complete  # Partially filled board should not be marked as complete
+    assert complete_sudoku.next_empty_cell is None

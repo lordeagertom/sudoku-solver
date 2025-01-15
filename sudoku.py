@@ -6,10 +6,10 @@ import numpy as np
 class Sudoku:
     def __init__(self, board: Optional[np.ndarray] = None):
         self.board = board if board is not None else np.full((9, 9), np.nan)
-        self.previous_cell = (0, 0)
         self.current_cell = (0, 0)
 
-    def find_next_empty_cell(self) -> tuple[int, int]:
+    @property
+    def next_empty_cell(self) -> tuple[int, int]:
         for i in range(9):
             for j in range(9):
                 if np.isnan(self.board[i][j]):
@@ -67,5 +67,7 @@ class Sudoku:
         return True
 
 
-def solve(sudoku: Sudoku):
-    cell = find_next_cell(sudoku)
+if __name__ == "__main__":
+    sudoku = Sudoku()
+    sudoku.solve()
+    print(sudoku.board)
