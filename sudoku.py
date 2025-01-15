@@ -6,6 +6,8 @@ import numpy as np
 class Sudoku:
     def __init__(self, board: Optional[np.ndarray] = None):
         self.board = board if board is not None else np.full((9, 9), np.nan)
+        self.previous_cell = (0, 0)
+        self.current_cell = (0, 0)
 
     def find_next_empty_cell(self) -> tuple[int, int]:
         for i in range(9):
@@ -13,13 +15,13 @@ class Sudoku:
                 if np.isnan(self.board[i][j]):
                     return i, j
 
-    def set_value(self, x: int, y: int, value: int):
-        if not np.isnan(self.board[x][y]):
-            raise ValueError(f"Can't set value {value} for cell {x}:{y}")
-        self.board[x][y] = value
+    def set_value(self, cell: tuple[int, int], value: int):
+        if not np.isnan(self.board[cell[0]][cell[1]]):
+            raise ValueError(f"Can't set value {value} for cell {cell[0]}:{cell[1]}")
+        self.board[cell[0]][cell[1]] = value
 
-    def delete_value(self, x: int, y: int):
-        self.board[x][y] = np.nan
+    def delete_value(self, cell: tuple[int, int]):
+        self.board[cell[0]][cell[1]] = np.nan
 
     def check_valid(self) -> bool:
         try:
@@ -60,7 +62,7 @@ class Sudoku:
             for j in range(3):
                 if len(set(self.board[3 * i:3 * i + 3, 3 * j:3 * j + 3][
                                ~np.isnan(self.board[3 * i:3 * i + 3, 3 * j:3 * j + 3])].flatten())) != np.sum(
-                        ~np.isnan(self.board[3 * i:3 * i + 3, 3 * j:3 * j + 3])):
+                    ~np.isnan(self.board[3 * i:3 * i + 3, 3 * j:3 * j + 3])):
                     return False
         return True
 

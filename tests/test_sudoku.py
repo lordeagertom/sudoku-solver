@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from sudoku import Sudoku
 
 
@@ -42,19 +41,19 @@ def complete_sudoku():
 
 
 def test_set_value_where_value_empty(empty_sudoku):
-    empty_sudoku.set_value(5, 2, 7)
+    empty_sudoku.set_value((5, 2), 7)
     assert empty_sudoku.board[5][2] == 7  # indices start from 0
 
 
 def test_set_value_where_value_present(complete_sudoku):
     with pytest.raises(Exception):
-        complete_sudoku.set_value(0, 0, 6)
+        complete_sudoku.set_value(0, 6)
 
 
 def test_delete_value():
     sudoku = Sudoku()
-    sudoku.set_value(0, 0, 5)
-    sudoku.delete_value(0, 0)
+    sudoku.set_value((0, 0), 5)
+    sudoku.delete_value((0, 0))
 
     assert np.isnan(sudoku.board[0][0]), "The value at the specified position was not deleted properly"
 
@@ -64,12 +63,12 @@ def test_check_valid_with_empty_board(empty_sudoku):
 
 
 def test_check_valid_with_less_than_1_value(empty_sudoku):
-    empty_sudoku.set_value(5, 2, 0)
+    empty_sudoku.set_value((2, 0), 0)
     assert not empty_sudoku.check_valid()  # This board is not valid, has values less than 1
 
 
 def test_check_valid_with_greater_than_9_value(empty_sudoku):
-    empty_sudoku.set_value(5, 2, 10)
+    empty_sudoku.set_value((2, 0), 10)
     assert not empty_sudoku.check_valid()  # This board is not valid, has values greater than 9
 
 
@@ -109,3 +108,11 @@ def test_find_next_cell_on_partially_filled_board(partial_sudoku):
 
 def test_find_next_cell_on_full_board(complete_sudoku):
     assert complete_sudoku.find_next_empty_cell() is None
+
+
+def test_check_complete_on_full_board(complete_sudoku):
+    assert complete_sudoku.complete  # Complete board should be marked as complete
+
+
+def test_check_complete_on_partially_filled_board(partial_sudoku):
+    assert not partial_sudoku.complete  # Partially filled board should not be marked as complete
