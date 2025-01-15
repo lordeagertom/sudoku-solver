@@ -16,6 +16,9 @@ class Sudoku:
             raise ValueError(f"Can't set value {value} for cell {x}:{y}")
         self.board[x][y] = value
 
+    def delete_value(self, x: int, y: int):
+        self.board[x][y] = np.nan
+
     def check_valid(self) -> bool:
         try:
             assert self.values_valid

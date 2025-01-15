@@ -53,6 +53,14 @@ def test_set_value_where_value_present(complete_sudoku):
         complete_sudoku.set_value(0, 0, 6)
 
 
+def test_delete_value():
+    sudoku = Sudoku()
+    sudoku.set_value(0, 0, 5)
+    sudoku.delete_value(0, 0)
+
+    assert np.isnan(sudoku.board[0][0]), "The value at the specified position was not deleted properly"
+
+
 def test_check_valid_with_empty_board(empty_sudoku):
     assert empty_sudoku.check_valid()  # Empty board is valid
 
