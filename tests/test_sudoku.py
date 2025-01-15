@@ -11,8 +11,7 @@ def empty_sudoku():
 
 @pytest.fixture
 def partial_sudoku():
-    sudoku = Sudoku()
-    sudoku.board = np.array([
+    sudoku = Sudoku(np.array([
         [5, 3, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
         [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
         [np.nan, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
@@ -22,14 +21,13 @@ def partial_sudoku():
         [np.nan, 6, np.nan, np.nan, np.nan, np.nan, 2, 8, np.nan],
         [np.nan, np.nan, np.nan, 4, 1, 9, np.nan, np.nan, 5],
         [np.nan, np.nan, np.nan, np.nan, 8, np.nan, np.nan, 7, 9]
-    ])
+    ]))
     return sudoku
 
 
 @pytest.fixture
 def complete_sudoku():
-    sudoku = Sudoku()
-    sudoku.board = np.array([
+    sudoku = Sudoku(np.array([
         [5, 3, 4, 6, 7, 8, 9, 1, 2],
         [6, 7, 2, 1, 9, 5, 3, 4, 8],
         [1, 9, 8, 3, 4, 2, 5, 6, 7],
@@ -39,7 +37,7 @@ def complete_sudoku():
         [9, 6, 1, 5, 3, 7, 2, 8, 4],
         [2, 8, 7, 4, 1, 9, 6, 3, 5],
         [3, 4, 5, 2, 8, 6, 1, 7, 9]
-    ])
+    ]))
     return sudoku
 
 

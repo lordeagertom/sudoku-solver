@@ -1,9 +1,11 @@
+from typing import Optional
+
 import numpy as np
 
 
 class Sudoku:
-    def __init__(self):
-        self.board = np.full((9, 9), np.nan)
+    def __init__(self, board: Optional[np.ndarray] = None):
+        self.board = board if board is not None else np.full((9, 9), np.nan)
 
     def find_next_empty_cell(self) -> tuple[int, int]:
         for i in range(9):
