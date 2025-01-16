@@ -1,5 +1,4 @@
 from typing import Optional
-
 import numpy as np
 
 
@@ -86,16 +85,6 @@ class Sudoku:
 
 
 if __name__ == "__main__":
-    sudoku = Sudoku(np.array([
-        [5, 3, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
-        [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
-        [np.nan, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
-        [8, np.nan, np.nan, np.nan, 6, np.nan, np.nan, np.nan, 3],
-        [4, np.nan, np.nan, 8, np.nan, 3, np.nan, np.nan, 1],
-        [7, np.nan, np.nan, np.nan, 2, np.nan, np.nan, np.nan, 6],
-        [np.nan, 6, np.nan, np.nan, np.nan, np.nan, 2, 8, np.nan],
-        [np.nan, np.nan, np.nan, 4, 1, 9, np.nan, np.nan, 5],
-        [np.nan, np.nan, np.nan, np.nan, 8, np.nan, np.nan, 7, 9]
-    ]))
+    sudoku = Sudoku()
     sudoku.solve()
     print(sudoku.board)
