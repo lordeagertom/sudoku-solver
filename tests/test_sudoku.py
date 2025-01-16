@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from sudoku import Sudoku
 
 
@@ -9,11 +10,27 @@ def empty_sudoku():
 
 
 @pytest.fixture
-def partial_sudoku():
+def solvable_sudoku():
     sudoku = Sudoku(np.array([
         [5, 3, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
         [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
         [np.nan, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
+        [8, np.nan, np.nan, np.nan, 6, np.nan, np.nan, np.nan, 3],
+        [4, np.nan, np.nan, 8, np.nan, 3, np.nan, np.nan, 1],
+        [7, np.nan, np.nan, np.nan, 2, np.nan, np.nan, np.nan, 6],
+        [np.nan, 6, np.nan, np.nan, np.nan, np.nan, 2, 8, np.nan],
+        [np.nan, np.nan, np.nan, 4, 1, 9, np.nan, np.nan, 5],
+        [np.nan, np.nan, np.nan, np.nan, 8, np.nan, np.nan, 7, 9]
+    ]))
+    return sudoku
+
+
+@pytest.fixture
+def unsolvable_sudoku():
+    sudoku = Sudoku(np.array([
+        [5, 3, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
+        [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
+        [2, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
         [8, np.nan, np.nan, np.nan, 6, np.nan, np.nan, np.nan, 3],
         [4, np.nan, np.nan, 8, np.nan, 3, np.nan, np.nan, 1],
         [7, np.nan, np.nan, np.nan, 2, np.nan, np.nan, np.nan, 6],
@@ -72,8 +89,8 @@ def test_check_valid_with_greater_than_9_value(empty_sudoku):
     assert not empty_sudoku.check_valid()  # This board is not valid, has values greater than 9
 
 
-def test_check_valid_with_nan_values(partial_sudoku):
-    assert partial_sudoku.check_valid()  # This board is valid, gaps are filled with nan
+def test_check_valid_with_nan_values(solvable_sudoku):
+    assert solvable_sudoku.check_valid()  # This board is valid, gaps are filled with nan
 
 
 def test_rows_valid_with_invalid_row():
@@ -102,9 +119,17 @@ def test_find_next_cell_on_empty_board(empty_sudoku):
     assert empty_sudoku.next_empty_cell == (0, 0)  # First cell should be (0, 0)
 
 
-def test_find_next_cell_on_partially_filled_board(partial_sudoku):
-    assert partial_sudoku.next_empty_cell == (0, 2)  # First empty cell should be (0, 2)
+def test_find_next_cell_on_partially_filled_board(solvable_sudoku):
+    assert solvable_sudoku.next_empty_cell == (0, 2)  # First empty cell should be (0, 2)
 
 
 def test_find_next_cell_on_full_board(complete_sudoku):
     assert complete_sudoku.next_empty_cell is None
+
+
+def test_solve_works_on_solvable_sudoku(solvable_sudoku):
+    assert solvable_sudoku.solve()  # Solvable sudoku should return True after solving
+
+
+def test_solve_does_not_work_on_unsolvable_sudoku(unsolvable_sudoku):
+    assert not unsolvable_sudoku.solve()  # Unsolvable sudoku should return False after attempting to solve
