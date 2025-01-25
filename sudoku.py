@@ -74,7 +74,45 @@ class Sudoku:
                     return False
         return True
 
-    def solve(self) -> bool:
+    def solve_iterative(self) -> bool:
+        solved = False
+        while not solved:
+            for i in range(9):
+                for j in range(9):
+                    if np.isnan(self.board[i][j]):
+                        options = list(self.initial_guesses)
+                        row = self.board[i, :]
+                        for element in row:
+                            try:
+                                options.remove(element)
+                            except ValueError:
+                                pass
+                        if len(options) == 1:
+                            self.set_value((i, j), options[0])
+                            continue
+                        col = self.board[:, j]
+                        for element in col:
+                            try:
+                                options.remove(element)
+                            except ValueError:
+                                pass
+                        if len(options) == 1:
+                            self.set_value((i, j), options[0])
+                            continue
+                        square = self.board[3 * (i // 3):3 * (i // 3) + 3, 3 * (j // 3):3 * (j // 3) + 3]
+                        for element in square:
+                            try:
+                                options.remove(element)
+                            except ValueError:
+                                pass
+                        if len(options) == 1:
+                            self.set_value((i, j), options[0])
+                            continue
+            if not np.isnan(self.board).any():
+                solved = True
+        return solved
+
+    def solve_recursive(self) -> bool:
         solved = False
         cell = self.next_empty_cell
         guesses = self.initial_guesses
@@ -84,7 +122,7 @@ class Sudoku:
                     return True
                 self.set_value(cell, guesses[0])
                 if self.check_valid():
-                    solved = self.solve()
+                    solved = self.solve_recursive()
                 if not solved:
                     guesses = guesses[1:]
                     self.delete_value(cell)
@@ -94,5 +132,5 @@ class Sudoku:
 
 if __name__ == "__main__":
     sudoku = Sudoku()
-    sudoku.solve()
+    sudoku.solve_iterative()
     print(sudoku.board)
