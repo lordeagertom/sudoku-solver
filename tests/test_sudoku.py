@@ -68,6 +68,21 @@ def test_sudoku_with_incorrect_board_dimensions():
         Sudoku(invalid_board)
 
 
+def test_invalid_sudoku_raises_error():
+    with pytest.raises(ValueError):
+        sudoku = Sudoku(np.array([
+        [5, 5, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
+        [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
+        [np.nan, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
+        [8, np.nan, np.nan, np.nan, 6, np.nan, np.nan, np.nan, 3],
+        [4, np.nan, np.nan, 8, np.nan, 3, np.nan, np.nan, 1],
+        [7, np.nan, np.nan, np.nan, 2, np.nan, np.nan, np.nan, 6],
+        [np.nan, 6, np.nan, np.nan, np.nan, np.nan, 2, 8, np.nan],
+        [np.nan, np.nan, np.nan, 4, 1, 9, np.nan, np.nan, 5],
+        [np.nan, np.nan, np.nan, np.nan, 8, np.nan, np.nan, 7, 9]
+    ]))
+
+
 def test_set_value_where_value_empty(empty_sudoku):
     empty_sudoku.set_value((5, 2), 7)
     assert empty_sudoku.board[5][2] == 7  # indices start from 0
@@ -75,14 +90,13 @@ def test_set_value_where_value_empty(empty_sudoku):
 
 def test_set_value_where_value_present(complete_sudoku):
     with pytest.raises(Exception):
-        complete_sudoku.set_value(0, 6)
+        complete_sudoku.set_value((1, 1), 6)
 
 
 def test_delete_value():
     sudoku = Sudoku()
     sudoku.set_value((0, 0), 5)
     sudoku.delete_value((0, 0))
-
     assert np.isnan(sudoku.board[0][0]), "The value at the specified position was not deleted properly"
 
 

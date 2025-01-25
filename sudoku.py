@@ -9,6 +9,8 @@ class Sudoku:
             if board.shape != (9, 9):
                 raise ValueError("The board must be of shape 9x9")
             self.board = board
+            if not self.check_valid():
+                raise ValueError("The board is already not valid as initialised")
         else:
             self.board = np.full((9, 9), np.nan)
         self.initial_guesses = (1, 2, 3, 4, 5, 6, 7, 8, 9)
