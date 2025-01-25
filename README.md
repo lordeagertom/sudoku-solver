@@ -1,0 +1,1 @@
+Check out my article on [EagerTom.com](https://lordeagertom.github.io) for a discussion of this repository
