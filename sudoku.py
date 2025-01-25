@@ -1,10 +1,16 @@
 from typing import Optional
+
 import numpy as np
 
 
 class Sudoku:
     def __init__(self, board: Optional[np.ndarray] = None):
-        self.board = board if board is not None else np.full((9, 9), np.nan)
+        if board is not None:
+            if board.shape != (9, 9):
+                raise ValueError("The board must be of shape 9x9")
+            self.board = board
+        else:
+            self.board = np.full((9, 9), np.nan)
         self.initial_guesses = (1, 2, 3, 4, 5, 6, 7, 8, 9)
 
     @property

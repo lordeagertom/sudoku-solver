@@ -57,6 +57,17 @@ def complete_sudoku():
     return sudoku
 
 
+def test_default_sudoku_initialization():
+    sudoku = Sudoku()
+    assert sudoku.board.shape == (9, 9)
+
+
+def test_sudoku_with_incorrect_board_dimensions():
+    with pytest.raises(ValueError):
+        invalid_board = np.zeros((8, 8))
+        Sudoku(invalid_board)
+
+
 def test_set_value_where_value_empty(empty_sudoku):
     empty_sudoku.set_value((5, 2), 7)
     assert empty_sudoku.board[5][2] == 7  # indices start from 0
