@@ -13,19 +13,60 @@ class Sudoku:
                 raise ValueError("The board is already not valid as initialised")
         else:
             self.board = np.full((9, 9), np.nan)
+        self.current_cell = (0, 0)
         self.initial_guesses = (1, 2, 3, 4, 5, 6, 7, 8, 9)
 
-    @property
-    def next_empty_cell(self) -> tuple[int, int]:
-        for i in range(9):
-            for j in range(9):
-                if np.isnan(self.board[i][j]):
-                    return i, j
+    def move_to_next_cell(self):
+        cell = self.current_cell
+        if cell[0] < 8:
+            self.current_cell = (cell[0] + 1, cell[1])
+        elif cell[1] < 8:
+            self.current_cell = (0, cell[1] + 1)
+        else:
+            self.current_cell = (0, 0)
 
     def set_value(self, cell: tuple[int, int], value: int):
         if not np.isnan(self.board[cell[0]][cell[1]]):
             raise ValueError(f"Can't set value {value} for cell {cell[0]}:{cell[1]}")
         self.board[cell[0]][cell[1]] = value
+
+    def solve_iterative(self) -> bool:
+        solved = False
+        while not solved:
+            cell = self.current_cell
+            if np.isnan(self.board[cell[0]][cell[1]]):
+                options = list(self.initial_guesses)
+                row = self.board[cell[0], :]
+                for element in row:
+                    try:
+                        options.remove(element)
+                    except ValueError:
+                        pass
+                if len(options) == 1:
+                    self.set_value(cell, options[0])
+                    continue
+                col = self.board[:, cell[1]]
+                for element in col:
+                    try:
+                        options.remove(element)
+                    except ValueError:
+                        pass
+                if len(options) == 1:
+                    self.set_value(cell, options[0])
+                    continue
+                square = self.board[3 * (cell[0] // 3):3 * (cell[0] // 3) + 3, 3 * (cell[1] // 3):3 * (cell[1] // 3) + 3]
+                for element in square:
+                    try:
+                        options.remove(element)
+                    except ValueError:
+                        pass
+                if len(options) == 1:
+                    self.set_value(cell, options[0])
+                    continue
+            if not np.isnan(self.board).any():
+                solved = True
+            self.move_to_next_cell()
+        return solved
 
     def delete_value(self, cell: tuple[int, int]):
         self.board[cell[0]][cell[1]] = np.nan
@@ -39,6 +80,13 @@ class Sudoku:
             return True
         except AssertionError:
             return False
+
+    @property
+    def next_empty_cell(self) -> tuple[int, int]:
+        for i in range(9):
+            for j in range(9):
+                if np.isnan(self.board[i][j]):
+                    return i, j
 
     @property
     def values_valid(self) -> bool:
@@ -73,44 +121,6 @@ class Sudoku:
                 if len(set(square_vals)) != num_cells_filled:
                     return False
         return True
-
-    def solve_iterative(self) -> bool:
-        solved = False
-        while not solved:
-            for i in range(9):
-                for j in range(9):
-                    if np.isnan(self.board[i][j]):
-                        options = list(self.initial_guesses)
-                        row = self.board[i, :]
-                        for element in row:
-                            try:
-                                options.remove(element)
-                            except ValueError:
-                                pass
-                        if len(options) == 1:
-                            self.set_value((i, j), options[0])
-                            continue
-                        col = self.board[:, j]
-                        for element in col:
-                            try:
-                                options.remove(element)
-                            except ValueError:
-                                pass
-                        if len(options) == 1:
-                            self.set_value((i, j), options[0])
-                            continue
-                        square = self.board[3 * (i // 3):3 * (i // 3) + 3, 3 * (j // 3):3 * (j // 3) + 3]
-                        for element in square:
-                            try:
-                                options.remove(element)
-                            except ValueError:
-                                pass
-                        if len(options) == 1:
-                            self.set_value((i, j), options[0])
-                            continue
-            if not np.isnan(self.board).any():
-                solved = True
-        return solved
 
     def solve_recursive(self) -> bool:
         solved = False
