@@ -9,8 +9,6 @@ class Sudoku:
             if board.shape != (9, 9):
                 raise ValueError("The board must be of shape 9x9")
             self.board = board
-            if not self.check_valid():
-                raise ValueError("The board is already not valid as initialised")
         else:
             self.board = np.full((9, 9), np.nan)
         self.current_cell = (0, 0)
@@ -50,9 +48,6 @@ class Sudoku:
                 solved = True
             self.move_to_next_cell()
         return solved
-
-    def delete_value(self, cell: tuple[int, int]):
-        self.board[cell[0]][cell[1]] = np.nan
 
     def check_valid(self) -> bool:
         try:
@@ -106,15 +101,16 @@ class Sudoku:
         return True
 
     def solve_recursive(self) -> bool:
-        cell = self.next_empty_cell
-        if not cell:  # there are no remaining empty cells i.e. the sudoku has been solved
-            return True
-
-        for guess in self.initial_guesses:
-            self.set_value(cell, guess)
-            if self.check_valid() and self.solve_recursive():
+        if self.check_valid():
+            cell = self.next_empty_cell
+            if not cell:  # there are no remaining empty cells i.e. the sudoku has been solved
                 return True
-            self.delete_value(cell)
+
+            for guess in self.initial_guesses:
+                sudoku = Sudoku(board=self.board.copy())
+                sudoku.set_value(cell, guess)
+                if sudoku.solve_recursive():
+                    return True
 
         return False  # if we try all options for a cell
 
