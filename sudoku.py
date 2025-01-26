@@ -37,32 +37,15 @@ class Sudoku:
             if np.isnan(self.board[cell[0]][cell[1]]):
                 options = list(self.initial_guesses)
                 row = self.board[cell[0], :]
-                for element in row:
-                    try:
-                        options.remove(element)
-                    except ValueError:
-                        pass
-                if len(options) == 1:
-                    self.set_value(cell, options[0])
-                    continue
                 col = self.board[:, cell[1]]
-                for element in col:
-                    try:
-                        options.remove(element)
-                    except ValueError:
-                        pass
-                if len(options) == 1:
-                    self.set_value(cell, options[0])
-                    continue
                 square = self.board[3 * (cell[0] // 3):3 * (cell[0] // 3) + 3, 3 * (cell[1] // 3):3 * (cell[1] // 3) + 3]
-                for element in square:
+                for element in np.unique(np.concatenate([row, col, square.ravel()])):
                     try:
                         options.remove(element)
                     except ValueError:
                         pass
                 if len(options) == 1:
                     self.set_value(cell, options[0])
-                    continue
             if not np.isnan(self.board).any():
                 solved = True
             self.move_to_next_cell()
