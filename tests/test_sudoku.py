@@ -95,19 +95,19 @@ def test_sudoku_with_incorrect_board_dimensions():
         Sudoku(invalid_board)
 
 
-def test_invalid_sudoku_raises_error():
-    with pytest.raises(ValueError):
-        sudoku = Sudoku(np.array([
-            [5, 5, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
-            [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
-            [np.nan, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
-            [8, np.nan, np.nan, np.nan, 6, np.nan, np.nan, np.nan, 3],
-            [4, np.nan, np.nan, 8, np.nan, 3, np.nan, np.nan, 1],
-            [7, np.nan, np.nan, np.nan, 2, np.nan, np.nan, np.nan, 6],
-            [np.nan, 6, np.nan, np.nan, np.nan, np.nan, 2, 8, np.nan],
-            [np.nan, np.nan, np.nan, 4, 1, 9, np.nan, np.nan, 5],
-            [np.nan, np.nan, np.nan, np.nan, 8, np.nan, np.nan, 7, 9]
-        ]))
+def test_invalid_sudoku_cannot_be_solved():
+    sudoku = Sudoku(np.array([
+        [5, 5, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
+        [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
+        [np.nan, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
+        [8, np.nan, np.nan, np.nan, 6, np.nan, np.nan, np.nan, 3],
+        [4, np.nan, np.nan, 8, np.nan, 3, np.nan, np.nan, 1],
+        [7, np.nan, np.nan, np.nan, 2, np.nan, np.nan, np.nan, 6],
+        [np.nan, 6, np.nan, np.nan, np.nan, np.nan, 2, 8, np.nan],
+        [np.nan, np.nan, np.nan, 4, 1, 9, np.nan, np.nan, 5],
+        [np.nan, np.nan, np.nan, np.nan, 8, np.nan, np.nan, 7, 9]
+    ]))
+    assert not sudoku.solve_recursive()
 
 
 def test_set_value_where_value_empty(empty_sudoku):
@@ -118,6 +118,30 @@ def test_set_value_where_value_empty(empty_sudoku):
 def test_set_value_where_value_present(complete_sudoku):
     with pytest.raises(Exception):
         complete_sudoku.set_value((1, 1), 6)
+
+
+@pytest.mark.parametrize("current_cell, next_cell", [
+    ((0, 0), (0, 1)),
+    ((0, 8), (1, 0)),
+    ((8, 8), (0, 0))])
+def test_move_to_next_cell(current_cell, next_cell):
+    sudoku = Sudoku()
+    sudoku.current_cell = current_cell
+    sudoku.move_to_next_cell()
+    assert sudoku.current_cell == next_cell
+
+
+def test_move_to_next_cell_on_full_board(complete_sudoku):
+    assert complete_sudoku.move_to_next_empty_cell() is None
+
+
+@pytest.mark.parametrize("current_cell, next_empty_cell", [
+    ((0, 0), (1, 1)),
+    ((5, 5), (7, 1))])
+def test_move_to_next_empty_cell(almost_complete_sudoku, current_cell, next_empty_cell):
+    almost_complete_sudoku.current_cell = current_cell
+    almost_complete_sudoku.move_to_next_empty_cell()
+    assert almost_complete_sudoku.current_cell == next_empty_cell
 
 
 def test_check_valid_with_empty_board(empty_sudoku):
@@ -162,18 +186,6 @@ def test_squares_valid_with_invalid_square():
 
 def test_solve_iteratively_works_on_almost_complete_sudoku(almost_complete_sudoku):
     assert almost_complete_sudoku.solve_iterative()
-
-
-def test_find_next_cell_on_empty_board(empty_sudoku):
-    assert empty_sudoku.next_empty_cell == (0, 0)  # First cell should be (0, 0)
-
-
-def test_find_next_cell_on_partially_filled_board(solvable_sudoku):
-    assert solvable_sudoku.next_empty_cell == (0, 2)  # First empty cell should be (0, 2)
-
-
-def test_find_next_cell_on_full_board(complete_sudoku):
-    assert complete_sudoku.next_empty_cell is None
 
 
 @pytest.mark.parametrize("sudoku_fixture", ["solvable_sudoku", "almost_complete_sudoku", "hard_sudoku"])

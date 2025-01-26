@@ -16,12 +16,15 @@ class Sudoku:
 
     def move_to_next_cell(self):
         cell = self.current_cell
-        if cell[0] < 8:
-            self.current_cell = (cell[0] + 1, cell[1])
-        elif cell[1] < 8:
-            self.current_cell = (0, cell[1] + 1)
+        if cell[1] < 8:
+            self.current_cell = (cell[0], cell[1] + 1)
+        elif cell[0] < 8:
+            self.current_cell = (cell[0] + 1, 0)
         else:
-            self.current_cell = (0, 0)
+            if not np.isnan(self.board).any():
+                self.current_cell = None
+            else:
+                self.current_cell = (0, 0)
 
     def set_value(self, cell: tuple[int, int], value: int):
         if not np.isnan(self.board[cell[0]][cell[1]]):
@@ -59,12 +62,9 @@ class Sudoku:
         except AssertionError:
             return False
 
-    @property
-    def next_empty_cell(self) -> tuple[int, int]:
-        for i in range(9):
-            for j in range(9):
-                if np.isnan(self.board[i][j]):
-                    return i, j
+    def move_to_next_empty_cell(self):
+        while self.current_cell is not None and not np.isnan(self.board[self.current_cell]):
+            self.move_to_next_cell()
 
     @property
     def values_valid(self) -> bool:
@@ -102,13 +102,13 @@ class Sudoku:
 
     def solve_recursive(self) -> bool:
         if self.check_valid():
-            cell = self.next_empty_cell
-            if not cell:  # there are no remaining empty cells i.e. the sudoku has been solved
+            self.move_to_next_empty_cell()
+            if not self.current_cell:  # there are no remaining empty cells i.e. the sudoku has been solved
                 return True
 
             for guess in self.initial_guesses:
                 sudoku = Sudoku(board=self.board.copy())
-                sudoku.set_value(cell, guess)
+                sudoku.set_value(self.current_cell, guess)
                 if sudoku.solve_recursive():
                     return True
 
