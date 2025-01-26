@@ -106,21 +106,17 @@ class Sudoku:
         return True
 
     def solve_recursive(self) -> bool:
-        solved = False
         cell = self.next_empty_cell
-        guesses = self.initial_guesses
-        if cell:
-            while len(guesses) > 0:
-                if solved:
-                    return True
-                self.set_value(cell, guesses[0])
-                if self.check_valid():
-                    solved = self.solve_recursive()
-                if not solved:
-                    guesses = guesses[1:]
-                    self.delete_value(cell)
-        else:
+        if not cell:  # there are no remaining empty cells i.e. the sudoku has been solved
             return True
+
+        for guess in self.initial_guesses:
+            self.set_value(cell, guess)
+            if self.check_valid() and self.solve_recursive():
+                return True
+            self.delete_value(cell)
+
+        return False  # if we try all options for a cell
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ def empty_sudoku():
 
 @pytest.fixture
 def solvable_sudoku():
-    sudoku = Sudoku(np.array([
+    return Sudoku(np.array([
         [5, 3, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
         [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
         [np.nan, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
@@ -22,12 +22,26 @@ def solvable_sudoku():
         [np.nan, np.nan, np.nan, 4, 1, 9, np.nan, np.nan, 5],
         [np.nan, np.nan, np.nan, np.nan, 8, np.nan, np.nan, 7, 9]
     ]))
-    return sudoku
+
+
+@pytest.fixture
+def hard_sudoku():
+    return Sudoku(np.array([
+        [8, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+        [np.nan, np.nan, 3, 6, np.nan, np.nan, np.nan, np.nan, np.nan],
+        [np.nan, 7, np.nan, np.nan, 9, np.nan, 2, np.nan, np.nan],
+        [np.nan, 5, np.nan, np.nan, np.nan, 7, np.nan, np.nan, np.nan],
+        [np.nan, np.nan, np.nan, np.nan, 4, 5, 7, np.nan, np.nan],
+        [np.nan, np.nan, np.nan, 1, np.nan, np.nan, np.nan, 3, np.nan],
+        [np.nan, np.nan, 1, np.nan, np.nan, np.nan, np.nan, 6, 8],
+        [np.nan, np.nan, 8, 5, np.nan, np.nan, np.nan, 1, np.nan],
+        [np.nan, 9, np.nan, np.nan, np.nan, np.nan, 4, np.nan, np.nan]
+    ]))
 
 
 @pytest.fixture
 def unsolvable_sudoku():
-    sudoku = Sudoku(np.array([
+    return Sudoku(np.array([
         [5, 3, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
         [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
         [2, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
@@ -38,12 +52,11 @@ def unsolvable_sudoku():
         [np.nan, np.nan, np.nan, 4, 1, 9, np.nan, np.nan, 5],
         [np.nan, np.nan, np.nan, np.nan, 8, np.nan, np.nan, 7, 9]
     ]))
-    return sudoku
 
 
 @pytest.fixture
 def complete_sudoku():
-    sudoku = Sudoku(np.array([
+    return Sudoku(np.array([
         [5, 3, 4, 6, 7, 8, 9, 1, 2],
         [6, 7, 2, 1, 9, 5, 3, 4, 8],
         [1, 9, 8, 3, 4, 2, 5, 6, 7],
@@ -54,12 +67,11 @@ def complete_sudoku():
         [2, 8, 7, 4, 1, 9, 6, 3, 5],
         [3, 4, 5, 2, 8, 6, 1, 7, 9]
     ]))
-    return sudoku
 
 
 @pytest.fixture
 def almost_complete_sudoku():
-    sudoku = Sudoku(np.array([
+    return Sudoku(np.array([
         [5, 3, 4, 6, 7, 8, 9, 1, 2],
         [6, np.nan, 2, 1, 9, 5, 3, np.nan, 8],
         [1, 9, 8, 3, 4, 2, 5, 6, 7],
@@ -70,7 +82,6 @@ def almost_complete_sudoku():
         [2, np.nan, 7, 4, 1, 9, 6, np.nan, 5],
         [3, 4, 5, 2, 8, 6, 1, 7, 9]
     ]))
-    return sudoku
 
 
 def test_default_sudoku_initialization():
@@ -172,8 +183,10 @@ def test_find_next_cell_on_full_board(complete_sudoku):
     assert complete_sudoku.next_empty_cell is None
 
 
-def test_solve_works_on_solvable_sudoku(solvable_sudoku):
-    assert solvable_sudoku.solve_recursive()  # Solvable sudoku should return True after solving
+@pytest.mark.parametrize("sudoku_fixture", ["solvable_sudoku", "almost_complete_sudoku", "hard_sudoku"])
+def test_solve_works_on_sudoku(request, sudoku_fixture):
+    sudoku = request.getfixturevalue(sudoku_fixture)
+    assert sudoku.solve_recursive()  # Solvable sudoku should return True after solving
 
 
 def test_solve_does_not_work_on_unsolvable_sudoku(unsolvable_sudoku):
