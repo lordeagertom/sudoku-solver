@@ -106,6 +106,7 @@ class Sudoku:
             sudoku = Sudoku(board=self.board.copy())
             if sudoku.set_value(self.current_cell, guess):
                 if sudoku.solve_recursive():
+                    self.board = sudoku.board
                     return True
 
         return False  # if we try all options for a cell
@@ -113,5 +114,5 @@ class Sudoku:
 
 if __name__ == "__main__":
     sudoku = Sudoku()
-    sudoku.solve_iterative()
+    sudoku.solve_recursive()
     print(sudoku.board)
