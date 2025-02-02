@@ -95,19 +95,19 @@ def test_sudoku_with_incorrect_board_dimensions():
         Sudoku(invalid_board)
 
 
-def test_invalid_sudoku_cannot_be_solved():
-    sudoku = Sudoku(np.array([
-        [5, 5, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
-        [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
-        [np.nan, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
-        [8, np.nan, np.nan, np.nan, 6, np.nan, np.nan, np.nan, 3],
-        [4, np.nan, np.nan, 8, np.nan, 3, np.nan, np.nan, 1],
-        [7, np.nan, np.nan, np.nan, 2, np.nan, np.nan, np.nan, 6],
-        [np.nan, 6, np.nan, np.nan, np.nan, np.nan, 2, 8, np.nan],
-        [np.nan, np.nan, np.nan, 4, 1, 9, np.nan, np.nan, 5],
-        [np.nan, np.nan, np.nan, np.nan, 8, np.nan, np.nan, 7, 9]
-    ]))
-    assert not sudoku.solve_recursive()
+def test_instantly_invalid_sudoku_cannot_be_initialised():
+    with pytest.raises(ValueError):
+        sudoku = Sudoku(np.array([
+            [5, 5, np.nan, np.nan, 7, np.nan, np.nan, np.nan, np.nan],
+            [6, np.nan, np.nan, 1, 9, 5, np.nan, np.nan, np.nan],
+            [np.nan, 9, 8, np.nan, np.nan, np.nan, np.nan, 6, np.nan],
+            [8, np.nan, np.nan, np.nan, 6, np.nan, np.nan, np.nan, 3],
+            [4, np.nan, np.nan, 8, np.nan, 3, np.nan, np.nan, 1],
+            [7, np.nan, np.nan, np.nan, 2, np.nan, np.nan, np.nan, 6],
+            [np.nan, 6, np.nan, np.nan, np.nan, np.nan, 2, 8, np.nan],
+            [np.nan, np.nan, np.nan, 4, 1, 9, np.nan, np.nan, 5],
+            [np.nan, np.nan, np.nan, np.nan, 8, np.nan, np.nan, 7, 9]
+        ]))
 
 
 def test_set_value_where_value_empty(empty_sudoku):

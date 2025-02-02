@@ -9,6 +9,8 @@ class Sudoku:
             if board.shape != (9, 9):
                 raise ValueError("The board must be of shape 9x9")
             self.board = board
+            if not self.check_valid():
+                raise ValueError("The board is not valid")
         else:
             self.board = np.full((9, 9), np.nan)
         self.current_cell = (0, 0)
@@ -57,11 +59,6 @@ class Sudoku:
         except AssertionError:
             return False
 
-    def move_to_next_empty_cell(self):
-        while self.current_cell is not None and not np.isnan(self.board[self.current_cell]):
-            self.move_to_next_cell()
-        return self.current_cell
-
     @property
     def values_valid(self) -> bool:
         for i in range(9):
@@ -95,6 +92,11 @@ class Sudoku:
                 if len(set(square_vals)) != num_cells_filled:
                     return False
         return True
+
+    def move_to_next_empty_cell(self):
+        while self.current_cell is not None and not np.isnan(self.board[self.current_cell]):
+            self.move_to_next_cell()
+        return self.current_cell
 
     def solve_recursive(self) -> bool:
         if not self.move_to_next_empty_cell():  # there are no remaining empty cells i.e. the sudoku has been solved
