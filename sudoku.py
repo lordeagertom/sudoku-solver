@@ -45,7 +45,7 @@ class Sudoku:
         return self.check_valid()
 
     def solve_iterative(self) -> bool:
-        while self.move_to_next_cell():  # method returns None if all cells are full: puzzle solved
+        while self.move_to_next_empty_cell():  # method returns None if all cells are full: puzzle solved
             options = [x for x in self.cell_options if x not in self.find_disallowed_values()]
             if len(options) == 1:
                 self.set_value(self.current_cell, options[0])
