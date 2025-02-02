@@ -30,6 +30,7 @@ class Sudoku:
         if not np.isnan(self.board[cell[0]][cell[1]]):
             raise ValueError(f"Can't set value {value} for cell {cell[0]}:{cell[1]}")
         self.board[cell[0]][cell[1]] = value
+        return self.check_valid()
 
     def solve_iterative(self) -> bool:
         solved = False
@@ -39,7 +40,8 @@ class Sudoku:
                 options = list(self.initial_guesses)
                 row = self.board[cell[0], :]
                 col = self.board[:, cell[1]]
-                square = self.board[3 * (cell[0] // 3):3 * (cell[0] // 3) + 3, 3 * (cell[1] // 3):3 * (cell[1] // 3) + 3]
+                square = self.board[3 * (cell[0] // 3):3 * (cell[0] // 3) + 3,
+                         3 * (cell[1] // 3):3 * (cell[1] // 3) + 3]
                 for element in np.unique(np.concatenate([row, col, square.ravel()])):
                     try:
                         options.remove(element)
@@ -101,14 +103,13 @@ class Sudoku:
         return True
 
     def solve_recursive(self) -> bool:
-        if self.check_valid():
-            self.move_to_next_empty_cell()
-            if not self.current_cell:  # there are no remaining empty cells i.e. the sudoku has been solved
-                return True
+        self.move_to_next_empty_cell()
+        if not self.current_cell:  # there are no remaining empty cells i.e. the sudoku has been solved
+            return True
 
-            for guess in self.initial_guesses:
-                sudoku = Sudoku(board=self.board.copy())
-                sudoku.set_value(self.current_cell, guess)
+        for guess in self.initial_guesses:
+            sudoku = Sudoku(board=self.board.copy())
+            if sudoku.set_value(self.current_cell, guess):
                 if sudoku.solve_recursive():
                     return True
 
