@@ -9,12 +9,22 @@ class Sudoku:
             if board.shape != (9, 9):
                 raise ValueError("The board must be of shape 9x9")
             self.board = board
-            if not self.check_valid():
-                raise ValueError("The board is not valid")
         else:
             self.board = np.full((9, 9), np.nan)
         self.current_cell = (0, 0)
         self.initial_guesses = (1, 2, 3, 4, 5, 6, 7, 8, 9)
+        if not self.check_valid():
+            raise ValueError("The board is not valid")
+
+    def check_valid(self) -> bool:
+        try:
+            assert self.values_valid  # checks that no values outside the 1-9 range are present in the puzzle
+            assert self.rows_valid  # checks that there are no row conflicts
+            assert self.columns_valid  # checks that there are no column conflicts
+            assert self.squares_valid  # checks that there are no square conflicts
+            return True
+        except AssertionError:
+            return False
 
     def move_to_next_cell(self):
         if self.current_cell[1] < 8:
@@ -48,16 +58,6 @@ class Sudoku:
                  3 * (self.current_cell[1] // 3):3 * (self.current_cell[1] // 3) + 3]
         disallowed_values = np.unique(np.concatenate([row, col, square.ravel()]))
         return disallowed_values[~np.isnan(disallowed_values)]
-
-    def check_valid(self) -> bool:
-        try:
-            assert self.values_valid
-            assert self.rows_valid
-            assert self.columns_valid
-            assert self.squares_valid
-            return True
-        except AssertionError:
-            return False
 
     @property
     def values_valid(self) -> bool:
