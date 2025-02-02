@@ -12,7 +12,7 @@ class Sudoku:
         else:
             self.board = np.full((9, 9), np.nan)
         self.current_cell = (0, 0)
-        self.initial_guesses = (1, 2, 3, 4, 5, 6, 7, 8, 9)
+        self.cell_options = (1, 2, 3, 4, 5, 6, 7, 8, 9)
         if not self.check_valid():
             raise ValueError("The board is not valid")
 
@@ -46,7 +46,7 @@ class Sudoku:
 
     def solve_iterative(self) -> bool:
         while self.move_to_next_cell():
-            options = [x for x in self.initial_guesses if x not in self.find_disallowed_values()]
+            options = [x for x in self.cell_options if x not in self.find_disallowed_values()]
             if len(options) == 1:
                 self.set_value(self.current_cell, options[0])
         return True
@@ -102,7 +102,7 @@ class Sudoku:
         if not self.move_to_next_empty_cell():  # there are no remaining empty cells i.e. the sudoku has been solved
             return True
 
-        for guess in self.initial_guesses:
+        for guess in self.cell_options:
             sudoku = Sudoku(board=self.board.copy())
             if sudoku.set_value(self.current_cell, guess):
                 if sudoku.solve_recursive():
