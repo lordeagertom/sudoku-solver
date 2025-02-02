@@ -195,4 +195,5 @@ def test_solve_works_on_sudoku(request, sudoku_fixture):
 
 
 def test_solve_does_not_work_on_unsolvable_sudoku(unsolvable_sudoku):
-    assert not unsolvable_sudoku.solve_recursive()  # Unsolvable sudoku should return False after attempting to solve
+    solved = unsolvable_sudoku.solve_recursive()
+    assert not solved  # Unsolvable sudoku should return False after attempting to solve

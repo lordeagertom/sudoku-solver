@@ -15,16 +15,16 @@ class Sudoku:
         self.initial_guesses = (1, 2, 3, 4, 5, 6, 7, 8, 9)
 
     def move_to_next_cell(self):
-        cell = self.current_cell
-        if cell[1] < 8:
-            self.current_cell = (cell[0], cell[1] + 1)
-        elif cell[0] < 8:
-            self.current_cell = (cell[0] + 1, 0)
+        if self.current_cell[1] < 8:
+            self.current_cell = (self.current_cell[0], self.current_cell[1] + 1)
+        elif self.current_cell[0] < 8:
+            self.current_cell = (self.current_cell[0] + 1, 0)
         else:
             if not np.isnan(self.board).any():
                 self.current_cell = None
             else:
                 self.current_cell = (0, 0)
+        return self.current_cell
 
     def set_value(self, cell: tuple[int, int], value: int):
         if not np.isnan(self.board[cell[0]][cell[1]]):
@@ -33,26 +33,21 @@ class Sudoku:
         return self.check_valid()
 
     def solve_iterative(self) -> bool:
-        solved = False
-        while not solved:
-            cell = self.current_cell
-            if np.isnan(self.board[cell[0]][cell[1]]):
+        while self.move_to_next_cell():
+            if np.isnan(self.board[self.current_cell[0]][self.current_cell[1]]):
                 options = list(self.initial_guesses)
-                row = self.board[cell[0], :]
-                col = self.board[:, cell[1]]
-                square = self.board[3 * (cell[0] // 3):3 * (cell[0] // 3) + 3,
-                         3 * (cell[1] // 3):3 * (cell[1] // 3) + 3]
+                row = self.board[self.current_cell[0], :]
+                col = self.board[:, self.current_cell[1]]
+                square = self.board[3 * (self.current_cell[0] // 3):3 * (self.current_cell[0] // 3) + 3,
+                         3 * (self.current_cell[1] // 3):3 * (self.current_cell[1] // 3) + 3]
                 for element in np.unique(np.concatenate([row, col, square.ravel()])):
                     try:
                         options.remove(element)
                     except ValueError:
                         pass
                 if len(options) == 1:
-                    self.set_value(cell, options[0])
-            if not np.isnan(self.board).any():
-                solved = True
-            self.move_to_next_cell()
-        return solved
+                    self.set_value(self.current_cell, options[0])
+        return True
 
     def check_valid(self) -> bool:
         try:
@@ -67,6 +62,7 @@ class Sudoku:
     def move_to_next_empty_cell(self):
         while self.current_cell is not None and not np.isnan(self.board[self.current_cell]):
             self.move_to_next_cell()
+        return self.current_cell
 
     @property
     def values_valid(self) -> bool:
@@ -103,8 +99,7 @@ class Sudoku:
         return True
 
     def solve_recursive(self) -> bool:
-        self.move_to_next_empty_cell()
-        if not self.current_cell:  # there are no remaining empty cells i.e. the sudoku has been solved
+        if not self.move_to_next_empty_cell():  # there are no remaining empty cells i.e. the sudoku has been solved
             return True
 
         for guess in self.initial_guesses:
