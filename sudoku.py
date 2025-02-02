@@ -34,20 +34,18 @@ class Sudoku:
 
     def solve_iterative(self) -> bool:
         while self.move_to_next_cell():
-            if np.isnan(self.board[self.current_cell[0]][self.current_cell[1]]):
-                options = list(self.initial_guesses)
-                row = self.board[self.current_cell[0], :]
-                col = self.board[:, self.current_cell[1]]
-                square = self.board[3 * (self.current_cell[0] // 3):3 * (self.current_cell[0] // 3) + 3,
-                         3 * (self.current_cell[1] // 3):3 * (self.current_cell[1] // 3) + 3]
-                for element in np.unique(np.concatenate([row, col, square.ravel()])):
-                    try:
-                        options.remove(element)
-                    except ValueError:
-                        pass
-                if len(options) == 1:
-                    self.set_value(self.current_cell, options[0])
+            options = [x for x in self.initial_guesses if x not in self.find_disallowed_values()]
+            if len(options) == 1:
+                self.set_value(self.current_cell, options[0])
         return True
+
+    def find_disallowed_values(self):
+        row = self.board[self.current_cell[0], :]
+        col = self.board[:, self.current_cell[1]]
+        square = self.board[3 * (self.current_cell[0] // 3):3 * (self.current_cell[0] // 3) + 3,
+                 3 * (self.current_cell[1] // 3):3 * (self.current_cell[1] // 3) + 3]
+        disallowed_values = np.unique(np.concatenate([row, col, square.ravel()]))
+        return disallowed_values[~np.isnan(disallowed_values)]
 
     def check_valid(self) -> bool:
         try:
